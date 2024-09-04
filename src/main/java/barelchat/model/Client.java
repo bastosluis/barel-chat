@@ -1,5 +1,7 @@
 package barelchat.model;
 
+// import barelchat.model.exception.NonStringReceivedException;
+
 import java.util.ArrayList;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -25,6 +27,23 @@ public class Client {
     public void sendMessage(String message) throws IOException {
         // TODO: Encrypted message        
         objectOutputStream.writeObject(username + ": " + message);
+    }
+
+    public void receiveMessage() throws ClassNotFoundException, IOException{
+        Object obj = objectInputStream.readObject();
+        if (obj instanceof String){
+            String message = (String) obj;
+            messages.add(message+"\n");
+        } else {
+            /*
+             * TODO: find a better way to get the online users array
+             * this can't be good practice. we have 2 problems here:
+             * first, this method has 2 responsabilities, it would be better to split it into 2
+             * second, we probably have a vunerability in this line bellow, better handling is needed
+             */
+            ArrayList<String> onlineUsers = (ArrayList<String>) obj;
+            this.onlineUsers = onlineUsers;
+        }
     }
 
 }
